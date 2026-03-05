@@ -5,28 +5,27 @@
 <title>Screen Search</title>
 </head>
 
-<body style="font-family:sans-serif;text-align:center;margin-top:80px;background:#234a96;color:white;">
+<body style="font-family:sans-serif;text-align:center;margin-top:80px;">
 
 <h2>Search Screen Code</h2>
 
-<input id="codeInput" placeholder="Enter Code" style="padding:12px;border-radius:30px;border:none;width:200px;">
-<button onclick="searchCode()" style="padding:12px 20px;border-radius:30px;border:none;">Search</button>
+<input id="codeInput" placeholder="Enter Screen Code">
+<button onclick="searchCode()">Search</button>
 
-<div id="result" style="margin-top:30px;background:white;color:black;padding:20px;border-radius:10px;display:inline-block;"></div>
+<div id="result" style="margin-top:20px;"></div>
 
 <script>
-
 function searchCode(){
 
 let code = document.getElementById("codeInput").value;
 
-fetch("https://pb-n8n.planbmedia.co.th/webhook-test/search-screen"+code)
+fetch("https://pb-n8n.planbmedia.co.th/webhook/search-screen?code=" + code,{
+method:"GET",
+mode:"cors"
+})
 
 .then(res => res.json())
-
 .then(data => {
-
-let d = data[0]
 
 document.getElementById("result").innerHTML = `
 Code : ${d.CodeDGT}<br>
@@ -36,16 +35,15 @@ Format : ${d.Format3}<br>
 Pixel : ${d.Pixel}<br>
 Width : ${d["กว้าง(m)"]}<br>
 Height : ${d["สูง(m)"]}
-`
+`;
 
 })
 
 .catch(err=>{
-document.getElementById("result").innerHTML="API Error"
-})
+document.getElementById("result").innerHTML = "Data not found";
+});
 
 }
-
 </script>
 
 </body>
