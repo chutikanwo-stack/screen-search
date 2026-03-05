@@ -1,152 +1,93 @@
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Plan B Media - Media Size Search</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:"Segoe UI",Tahoma,Arial,sans-serif;background:#0d1117;min-height:100vh;padding:40px 20px}
-.container{max-width:1100px;margin:0 auto}
-.header{display:flex;align-items:center;gap:16px;margin-bottom:8px}
-.logo{font-size:2.2rem;font-weight:900;color:#e63946;letter-spacing:2px}
-.logo span{color:#fff}
-h1{font-size:1.6rem;color:#fff;font-weight:700}
-.subtitle{color:#8b949e;margin-bottom:28px;font-size:.95rem}
-.search-row{display:flex;gap:12px;margin-bottom:16px}
-.search-row input{flex:1;padding:14px 20px;border:2px solid #30363d;border-radius:10px;font-size:1rem;outline:none;background:#161b22;color:#e6edf3;transition:border-color .2s}
-.search-row input:focus{border-color:#e63946}
-.search-row input::placeholder{color:#484f58}
-.search-row button{padding:14px 28px;background:#e63946;color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;transition:background .2s;white-space:nowrap}
-.search-row button:hover{background:#c1121f}
-.hint{font-size:.82rem;color:#484f58;margin-bottom:20px}
-.hint code{background:#21262d;color:#79c0ff;padding:2px 8px;border-radius:4px;font-family:monospace;margin:0 3px}
-.toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px}
-.stats{font-size:.9rem;color:#8b949e}
-.stats strong{color:#e6edf3}
-.view-btns{display:flex;gap:6px}
-.vbtn{padding:7px 16px;border:1px solid #30363d;border-radius:8px;background:#161b22;cursor:pointer;font-size:.82rem;color:#8b949e;transition:all .15s}
-.vbtn.active{background:#e63946;border-color:#e63946;color:#fff;font-weight:600}
-.loading{text-align:center;padding:80px;color:#484f58;font-size:1rem}
-.empty{text-align:center;padding:100px 20px;color:#484f58;font-size:1.05rem}
-.empty code{display:block;margin-top:10px;font-size:.8rem;color:#30363d}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
-.card{background:#161b22;border-radius:12px;padding:20px;border:1px solid #21262d;transition:border-color .2s,transform .15s}
-.card:hover{border-color:#e63946;transform:translateY(-2px)}
-.card-title{font-weight:700;color:#e6edf3;font-size:1.05rem;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #21262d}
-.field{display:flex;gap:8px;padding:6px 0;font-size:.82rem}
-.fl{color:#484f58;font-weight:600;min-width:120px;flex-shrink:0}
-.fv{color:#c9d1d9}
-.badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:.75rem;font-weight:700;background:#1f2d3d;color:#79c0ff;border:1px solid #1f4068}
-.badge-red{background:#2d1515;color:#ff7b72;border-color:#3d1515}
-.src{font-size:.72rem;color:#30363d;margin-top:10px;font-style:italic}
-table{width:100%;background:#161b22;border-radius:12px;overflow:hidden;border:1px solid #21262d;border-collapse:collapse}
-th{background:#21262d;color:#8b949e;padding:12px 16px;text-align:left;font-size:.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
-td{padding:10px 16px;border-bottom:1px solid #21262d;font-size:.82rem;color:#c9d1d9;vertical-align:top}
-tr:last-child td{border-bottom:none}
-tr:hover td{background:#1c2128}
-mark.hl{background:#3d3200;color:#f0c040;border-radius:2px;padding:0 2px}
-#config{background:#1a1a00;border:1px solid #f0c040;border-radius:10px;padding:14px 18px;margin-bottom:24px;font-size:.85rem;color:#f0c040}
-#config code{background:#2d2800;padding:2px 6px;border-radius:4px;font-family:monospace}
-</style>
-</head>
-<body>
-<div class="container">
-<div class="header">
-<div class="logo">Plan<span>B</span></div>
-<div>
-<h1>Media Size Search</h1>
-</div>
-</div>
-<p class="subtitle">Search media package specifications extracted from PDFs</p>
-<div id="config">
-&#9881;&#65039; <strong>Setup:</strong> Replace <code>REPLACE_WITH_YOUR_WEBHOOK_URL</code> in the &lt;script&gt; with your n8n webhook URL, then remove this banner.
-</div>
-<div class="search-row">
-<input type="text" id="q" placeholder="Search package name, resolution, location... e.g. &quot;16:9&quot; or &quot;1920&quot; or &quot;Animation&quot;"/>
-<button onclick="doSearch()">Search</button>
-</div>
-<p class="hint">Try: <code>Animation 16:9</code> <code>1920 x 1080</code> <code>TVC</code> <code>FullHd</code> &mdash; multiple words = AND search</p>
-<div class="toolbar">
-<div class="stats" id="stats"></div>
-<div class="view-btns">
-<button class="vbtn active" id="btn-card" onclick="setView('card')">&#8861; Cards</button>
-<button class="vbtn" id="btn-table" onclick="setView('table')">&equiv; Table</button>
-</div>
-</div>
-<div id="results"></div>
-</div>
 <script>
-var API = "https://pb-n8n.planbmedia.co.th/webhook/search-screen";
-var view="card",lastResults=[],lastQ="";
-document.getElementById("q").addEventListener("keydown",function(e){if(e.key==="Enter")doSearch();});
-window.addEventListener("load",function(){doSearch();});
-function setView(v){view=v;document.getElementById("btn-card").classList.toggle("active",v==="card");document.getElementById("btn-table").classList.toggle("active",v==="table");render(lastResults,lastQ);}
-function hl(txt,q){if(!q||txt===undefined||txt===null)return txt||"";var s=String(txt);var kws=q.split(/[\s,]+/).filter(function(k){return k.length>0;});kws.forEach(function(kw){var re=new RegExp("("+kw.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+")","gi");s=s.replace(re,"<mark class=\"hl\">$1</mark>");});return s;}
+
+var API="https://pb-n8n.planbmedia.co.th/webhook/search-screen";
+
 function doSearch(){
+
 var q=document.getElementById("q").value.trim();
-lastQ=q;
-var el=document.getElementById("results");
-var st=document.getElementById("stats");
-el.innerHTML="<div class=\"loading\">Searching...</div>";
-st.textContent="";
-fetch(API+"?q="+encodeURIComponent(q))
-.then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json();})
-.then(function(data){
-lastResults=data.results||data||[];
-var n=lastResults.length;
-st.innerHTML="Found <strong>"+n+"</strong> result"+(n!==1?"s":"")+(q?" for <strong>\""+q+"\"</strong>":"");
-render(lastResults,q);
+
+fetch(API+"?code="+encodeURIComponent(q))
+
+.then(r=>r.json())
+
+.then(data=>{
+
+var results=data.results||data;
+
+render(results);
+
 })
-.catch(function(e){
-el.innerHTML="<div class=\"empty\">Could not reach search API.<br/><code>"+e.message+"</code><br/><br/>Make sure the n8n Search API workflow is active and the URL above is correct.</div>";
-st.textContent="";
+
+.catch(err=>{
+
+document.getElementById("results").innerHTML="Search error";
+
 });
+
 }
-function render(data,q){
-var el=document.getElementById("results");
-if(!data||!data.length){el.innerHTML="<div class=\"empty\">No results found. Try different keywords.</div>";return;}
-if(view==="table")renderTable(data,q);else renderCards(data,q);
+
+
+
+function render(data){
+
+if(!data||!data.length){
+
+document.getElementById("results").innerHTML="No results";
+
+return;
+
 }
-function val(v){return v&&v!=="undefined"&&v!=="null"?v:"";}
-function renderCards(data,q){
-var el=document.getElementById("results");
-var html="<div class=\"grid\">";
+
+
+
+var html="<div class='grid'>";
+
+
+
 data.forEach(function(item){
-var title=val(item.package_name)||val(item.short_code)||val(item.source_file)||"Unknown";
-html+="<div class=\"card\">";
-html+="<div class=\"card-title\">"+hl(title,q)+"</div>";
-if(val(item.short_code))html+="<div class=\"field\"><span class=\"fl\">Code</span><span class=\"fv\"><span class=\"badge badge-red\">"+hl(item.short_code,q)+"</span></span></div>";
-if(val(item.format_type))html+="<div class=\"field\"><span class=\"fl\">Format Type</span><span class=\"fv\">"+hl(item.format_type,q)+"</span></div>";
-if(val(item.screen_resolution))html+="<div class=\"field\"><span class=\"fl\">Resolution</span><span class=\"fv\"><span class=\"badge\">"+hl(item.screen_resolution,q)+"</span></span></div>";
-if(val(item.file_format))html+="<div class=\"field\"><span class=\"fl\">File Format</span><span class=\"fv\">"+hl(item.file_format,q)+"</span></div>";
-if(val(item.format_tvc))html+="<div class=\"field\"><span class=\"fl\">TVC Quality</span><span class=\"fv\">"+hl(item.format_tvc,q)+"</span></div>";
-if(val(item.frame_rate))html+="<div class=\"field\"><span class=\"fl\">Frame Rate</span><span class=\"fv\">"+hl(item.frame_rate,q)+"</span></div>";
-if(val(item.format_aw))html+="<div class=\"field\"><span class=\"fl\">Format AW</span><span class=\"fv\">"+hl(item.format_aw,q)+"</span></div>";
-if(val(item.remarks))html+="<div class=\"field\"><span class=\"fl\">Remarks</span><span class=\"fv\">"+hl(item.remarks,q)+"</span></div>";
-if(val(item.source_file))html+="<div class=\"src\">"+item.source_file+"</div>";
-html+="</div>";
+
+html+=`
+
+<div class="card">
+
+<div class="card-title">${item["ชื่อสื่อAppendix"] || "-"}</div>
+
+<div class="field"><span class="fl">Code</span><span class="fv">${item.CodeDGT || "-"}</span></div>
+
+<div class="field"><span class="fl">Area</span><span class="fv">${item.Area || "-"}</span></div>
+
+<div class="field"><span class="fl">Screen Type</span><span class="fv">${item["ประเภทหน้าจอ"] || "-"}</span></div>
+
+<div class="field"><span class="fl">Coverage</span><span class="fv">${item.TypeScreens || "-"}</span></div>
+
+<div class="field"><span class="fl">Format</span><span class="fv">${item.Format3 || "-"}</span></div>
+
+<div class="field"><span class="fl">Pixel</span><span class="fv">${item.Pixel || "-"}</span></div>
+
+<div class="field"><span class="fl">Width (m)</span><span class="fv">${item["กว้าง(m)"] || "-"}</span></div>
+
+<div class="field"><span class="fl">Height (m)</span><span class="fv">${item["สูง(m)"] || "-"}</span></div>
+
+</div>
+
+`;
+
 });
+
+
+
 html+="</div>";
-el.innerHTML=html;
+
+document.getElementById("results").innerHTML=html;
+
 }
-function renderTable(data,q){
-var el=document.getElementById("results");
-var rows=data.map(function(item){return "<tr>"+
-"<td>"+hl(val(item.package_name)||"—",q)+"</td>"+
-"<td>"+hl(val(item.short_code)||"—",q)+"</td>"+
-"<td>"+hl(val(item.format_type)||"—",q)+"</td>"+
-"<td>"+hl(val(item.screen_resolution)||"—",q)+"</td>"+
-"<td>"+hl(val(item.file_format)||"—",q)+"</td>"+
-"<td>"+hl(val(item.format_tvc)||"—",q)+"</td>"+
-"<td>"+hl(val(item.frame_rate)||"—",q)+"</td>"+
-"<td>"+hl(val(item.remarks)||"—",q)+"</td>"+
-"</tr>";}).join("");
-el.innerHTML="<table><thead><tr>"+
-"<th>Package Name</th><th>Code</th><th>Format Type</th><th>Resolution</th><th>File Format</th><th>TVC Quality</th><th>Frame Rate</th><th>Remarks</th>"+
-"</tr></thead><tbody>"+rows+"</tbody></table>";
-}
+
+
+
+document.getElementById("q").addEventListener("keydown",function(e){
+
+if(e.key==="Enter") doSearch();
+
+});
+
 </script>
-</body>
-</html>
