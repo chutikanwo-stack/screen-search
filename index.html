@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 <meta charset="UTF-8">
 <title>Screen Search</title>
@@ -15,16 +16,17 @@ color:white;
 }
 
 input{
-padding:12px 20px;
-border-radius:30px;
+padding:14px 20px;
+width:260px;
+border-radius:50px;
 border:none;
-width:220px;
 font-size:16px;
+outline:none;
 }
 
 button{
-padding:12px 25px;
-border-radius:30px;
+padding:14px 28px;
+border-radius:50px;
 border:none;
 background:white;
 color:#0b3d91;
@@ -34,18 +36,20 @@ margin-left:10px;
 }
 
 #result{
-margin-top:30px;
+margin-top:40px;
 background:white;
 color:black;
 display:inline-block;
-padding:20px;
+padding:25px;
 border-radius:12px;
 text-align:left;
+min-width:320px;
 }
 
 </style>
 
 </head>
+
 
 <body>
 
@@ -56,41 +60,39 @@ text-align:left;
 
 <div id="result"></div>
 
+
 <script>
 
 function searchCode(){
 
 let code = document.getElementById("codeInput").value;
 
-fetch("https://pb-n8n.planbmedia.co.th/webhook/search-screen?code=" + code,{
-method:"GET",
-mode:"cors"
-})
+fetch("https://pb-n8n.planbmedia.co.th/webhook/search-screen?code=" + code)
 
-.then(res => res.json())
+.then(response => response.json())
+
 .then(data => {
 
 let d = data[0];
 
 document.getElementById("result").innerHTML = `
-<b>Code DGT :</b> ${d.CodeDGT}<br>
-<b>Code Hello :</b> ${d.CodeHello}<br>
-<b>ชื่อจอ :</b> ${d["ชื่อจอในAppendix"]}<br>
+<b>Code :</b> ${d.CodeDGT}<br><br>
+<b>Location :</b> ${d["ชื่อจอในAppendix"]}<br>
 <b>Area :</b> ${d.Area}<br>
-<b>เส้นถนน :</b> ${d["เส้นถนนรับการมอง"]}<br>
 <b>Type :</b> ${d.TypeScreens}<br>
 <b>Format :</b> ${d.Format3}<br>
 <b>Pixel :</b> ${d.Pixel}<br>
 <b>Width :</b> ${d["กว้าง(m)"]} m<br>
 <b>Height :</b> ${d["สูง(m)"]} m<br>
-<b>Area (sqm) :</b> ${d["ตร.ม."]}<br>
 <b>Full :</b> ${d.Full}
 `;
 
 })
 
-.catch(err=>{
+.catch(error => {
+
 document.getElementById("result").innerHTML = "Data not found";
+
 });
 
 }
