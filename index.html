@@ -1,18 +1,11 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Screen Search</title>
-</head>
-
-<body style="font-family:sans-serif;text-align:center;margin-top:80px;">
-
+<div style="text-align:center;">
 <h2>Search Screen Code</h2>
 
 <input id="codeInput" placeholder="Enter Screen Code">
 <button onclick="searchCode()">Search</button>
 
 <div id="result" style="margin-top:20px;"></div>
+</div>
 
 <script>
 function searchCode(){
@@ -23,27 +16,24 @@ fetch("https://pb-n8n.planbmedia.co.th/webhook/search-screen?code=" + code,{
 method:"GET",
 mode:"cors"
 })
-
 .then(res => res.json())
 .then(data => {
 
 document.getElementById("result").innerHTML = `
 Code : ${data.CodeDGT}<br>
-Screen Name : ${data["ชื่อจอ"]}<br>
+Screen Name : ${data["ชื่อจอในAppendix"]}<br>
 Area : ${data.Area}<br>
+Type : ${data.TypeScreens}<br>
+Format : ${data.Format3}<br>
 Pixel : ${data.Pixel}<br>
-Width : ${data["กว้าง(m)"]}<br>
-Height : ${data["สูง(m)"]}
+Width : ${data["กว้าง(m)"]} m<br>
+Height : ${data["สูง(m)"]} m<br>
 `;
 
 })
-
 .catch(err=>{
 document.getElementById("result").innerHTML = "Data not found";
 });
 
 }
 </script>
-
-</body>
-</html>
