@@ -1,65 +1,18 @@
 <!DOCTYPE html>
 <html>
-
 <head>
 <meta charset="UTF-8">
 <title>Screen Search</title>
-
-<style>
-
-body{
-background:#0b3d91;
-font-family:sans-serif;
-text-align:center;
-margin-top:100px;
-color:white;
-}
-
-input{
-padding:14px 20px;
-width:260px;
-border-radius:50px;
-border:none;
-font-size:16px;
-outline:none;
-}
-
-button{
-padding:14px 28px;
-border-radius:50px;
-border:none;
-background:white;
-color:#0b3d91;
-font-weight:bold;
-cursor:pointer;
-margin-left:10px;
-}
-
-#result{
-margin-top:40px;
-background:white;
-color:black;
-display:inline-block;
-padding:25px;
-border-radius:12px;
-text-align:left;
-min-width:300px;
-}
-
-</style>
-
 </head>
 
-
-<body>
+<body style="font-family:sans-serif;text-align:center;margin-top:80px;">
 
 <h2>Search Screen Code</h2>
 
-<input id="codeInput" placeholder="Enter Code เช่น DGT024">
+<input id="codeInput" placeholder="Enter Code">
 <button onclick="searchCode()">Search</button>
 
-<div id="result"></div>
-
+<div id="result" style="margin-top:30px;"></div>
 
 <script>
 
@@ -69,11 +22,11 @@ let code = document.getElementById("codeInput").value;
 
 fetch("https://pb-n8n.planbmedia.co.th/webhook/search-screen?code=" + code)
 
-.then(response => response.json())
+.then(res => res.json())
 
 .then(data => {
 
-if(!data || data.length === 0){
+if(data.length == 0){
 document.getElementById("result").innerHTML = "Data not found";
 return;
 }
@@ -81,29 +34,19 @@ return;
 let d = data[0];
 
 document.getElementById("result").innerHTML = `
-
-<b>Code :</b> ${d.CodeDGT}<br><br>
-
-<b>Location :</b> ${d["ชื่อจอในAppendix"]}<br>
-
-<b>Type :</b> ${d.TypeScreens}<br>
-
-<b>Format :</b> ${d.Format3}<br>
-
-<b>Pixel :</b> ${d.Pixel}<br>
-
-<b>Width :</b> ${d["กว้าง(m)"]} m<br>
-
-<b>Height :</b> ${d["สูง(m)"]} m
-
+Code : ${d.CodeDGT}<br>
+Name : ${d["ชื่อจอในAppendix"]}<br>
+Type : ${d.TypeScreens}<br>
+Format : ${d.Format3}<br>
+Pixel : ${d.Pixel}<br>
+Width : ${d["กว้าง(m)"]}<br>
+Height : ${d["สูง(m)"]}
 `;
 
 })
 
-.catch(error => {
-
+.catch(err=>{
 document.getElementById("result").innerHTML = "Error connecting API";
-
 });
 
 }
@@ -111,5 +54,4 @@ document.getElementById("result").innerHTML = "Error connecting API";
 </script>
 
 </body>
-
 </html>
