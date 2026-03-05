@@ -1,93 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Screen Search</title>
+
+<style>
+
+body{
+font-family:sans-serif;
+text-align:center;
+margin-top:120px;
+background:linear-gradient(135deg,#0f4c81,#1c7ed6);
+color:white;
+}
+
+h2{
+font-size:32px;
+margin-bottom:30px;
+}
+
+.searchBox{
+display:flex;
+justify-content:center;
+gap:10px;
+}
+
+#codeInput{
+padding:14px 25px;
+border:none;
+border-radius:40px;
+width:260px;
+font-size:16px;
+outline:none;
+}
+
+button{
+padding:14px 28px;
+border:none;
+border-radius:40px;
+background:white;
+color:#0f4c81;
+font-weight:bold;
+cursor:pointer;
+transition:0.2s;
+}
+
+button:hover{
+background:#e7f1ff;
+}
+
+#result{
+margin-top:30px;
+background:white;
+color:#333;
+display:inline-block;
+padding:20px 30px;
+border-radius:12px;
+min-width:260px;
+box-shadow:0 10px 30px rgba(0,0,0,0.2);
+}
+
+</style>
+</head>
+
+<body>
+
+<h2>Search Screen Code</h2>
+
+<div class="searchBox">
+<input id="codeInput" placeholder="Enter Screen Code">
+<button onclick="searchCode()">Search</button>
+</div>
+
+<div id="result"></div>
+
 <script>
 
-var API="https://pb-n8n.planbmedia.co.th/webhook/search-screen";
+function searchCode(){
 
-function doSearch(){
+let code = document.getElementById("codeInput").value;
 
-var q=document.getElementById("q").value.trim();
+fetch("https://pb-n8n.planbmedia.co.th/webhook/search-screen?code=" + code,{
+method:"GET",
+mode:"cors"
+})
 
-fetch(API+"?code="+encodeURIComponent(q))
+.then(res => res.json())
+.then(data => {
 
-.then(r=>r.json())
-
-.then(data=>{
-
-var results=data.results||data;
-
-render(results);
+document.getElementById("result").innerHTML = `
+<b>Code :</b> ${data.CodeDGT}<br>
+<b>Area :</b> ${data.Area}<br>
+<b>Pixel :</b> ${data.Pixel}<br>
+<b>Width :</b> ${data["กว้าง(m)"]}<br>
+<b>Height :</b> ${data["สูง(m)"]}
+`;
 
 })
 
 .catch(err=>{
-
-document.getElementById("results").innerHTML="Search error";
-
+document.getElementById("result").innerHTML = "Data not found";
 });
 
 }
-
-
-
-function render(data){
-
-if(!data||!data.length){
-
-document.getElementById("results").innerHTML="No results";
-
-return;
-
-}
-
-
-
-var html="<div class='grid'>";
-
-
-
-data.forEach(function(item){
-
-html+=`
-
-<div class="card">
-
-<div class="card-title">${item["ชื่อสื่อAppendix"] || "-"}</div>
-
-<div class="field"><span class="fl">Code</span><span class="fv">${item.CodeDGT || "-"}</span></div>
-
-<div class="field"><span class="fl">Area</span><span class="fv">${item.Area || "-"}</span></div>
-
-<div class="field"><span class="fl">Screen Type</span><span class="fv">${item["ประเภทหน้าจอ"] || "-"}</span></div>
-
-<div class="field"><span class="fl">Coverage</span><span class="fv">${item.TypeScreens || "-"}</span></div>
-
-<div class="field"><span class="fl">Format</span><span class="fv">${item.Format3 || "-"}</span></div>
-
-<div class="field"><span class="fl">Pixel</span><span class="fv">${item.Pixel || "-"}</span></div>
-
-<div class="field"><span class="fl">Width (m)</span><span class="fv">${item["กว้าง(m)"] || "-"}</span></div>
-
-<div class="field"><span class="fl">Height (m)</span><span class="fv">${item["สูง(m)"] || "-"}</span></div>
-
-</div>
-
-`;
-
-});
-
-
-
-html+="</div>";
-
-document.getElementById("results").innerHTML=html;
-
-}
-
-
-
-document.getElementById("q").addEventListener("keydown",function(e){
-
-if(e.key==="Enter") doSearch();
-
-});
 
 </script>
+
+</body>
+</html>
