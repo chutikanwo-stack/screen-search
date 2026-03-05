@@ -1,38 +1,51 @@
-<div style="text-align:center;">
-<h2>Search Screen Code</h2>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Search Screen Code</title>
+</head>
 
-<input id="codeInput" placeholder="Enter Screen Code">
+<body style="text-align:center;font-family:sans-serif;margin-top:80px;">
+
+<h1>Search Screen Code</h1>
+
+<input id="codeInput" placeholder="Enter Code">
 <button onclick="searchCode()">Search</button>
 
 <div id="result" style="margin-top:20px;"></div>
-</div>
 
 <script>
+
 function searchCode(){
 
 let code = document.getElementById("codeInput").value;
 
 fetch("https://pb-n8n.planbmedia.co.th/webhook/search-screen?code=" + code)
-.then(res => res.json())
+.then(response => response.json())
 .then(data => {
 
-let screen = data[0];
+let screen = data[0].json || data[0];
 
 document.getElementById("result").innerHTML = `
-Code : ${screen.CodeDGT}<br>
-Screen Name : ${screen.ชื่อจอในAppendix}<br>
-Area : ${screen.Area}<br>
-Type : ${screen.TypeScreens}<br>
-Format : ${screen.Format3}<br>
-Pixel : ${screen.Pixel}<br>
-Width : ${screen["กว้าง(m)"]} m<br>
-Height : ${screen["สูง(m)"]} m
+Code : ${screen.CodeDGT} <br>
+Screen Name : ${screen["ชื่อตามAppendix"]} <br>
+Area : ${screen.Area} <br>
+Location : ${screen["เส้นทางการจราจร"]} <br>
+Pixel : ${screen.Pixel} <br>
+Width : ${screen["กว้าง(m)"]} <br>
+Height : ${screen["สูง(m)"]}
 `;
 
 })
-.catch(err=>{
+.catch(error => {
+
 document.getElementById("result").innerHTML = "Data not found";
+
 });
 
 }
+
 </script>
+
+</body>
+</html>
