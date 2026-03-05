@@ -12,22 +12,21 @@ function searchCode(){
 
 let code = document.getElementById("codeInput").value;
 
-fetch("https://pb-n8n.planbmedia.co.th/webhook/search-screen?code=" + code,{
-method:"GET",
-mode:"cors"
-})
+fetch("https://pb-n8n.planbmedia.co.th/webhook/search-screen?code=" + code)
 .then(res => res.json())
 .then(data => {
 
+let screen = data[0];
+
 document.getElementById("result").innerHTML = `
-Code : ${data.CodeDGT}<br>
-Screen Name : ${data["ชื่อตามAppendix"]}<br>
-Area : ${data.Area}<br>
-Type : ${data.TypeScreens}<br>
-Format : ${data.Format3}<br>
-Pixel : ${data.Pixel}<br>
-Width : ${data["กว้าง(m)"]} m<br>
-Height : ${data["สูง(m)"]} m<br>
+Code : ${screen.CodeDGT}<br>
+Screen Name : ${screen["ชื่อจอในAppendix"]}<br>
+Area : ${screen.Area}<br>
+Type : ${screen.TypeScreens}<br>
+Format : ${screen.Format3}<br>
+Pixel : ${screen.Pixel}<br>
+Width : ${screen["กว้าง(m)"]} m<br>
+Height : ${screen["สูง(m)"]} m
 `;
 
 })
