@@ -7,70 +7,52 @@
 <style>
 
 body{
+background:#0b3d91;
 font-family:sans-serif;
 text-align:center;
-margin-top:120px;
-background:linear-gradient(135deg,#0f4c81,#1c7ed6);
+margin-top:100px;
 color:white;
 }
 
-h2{
-font-size:32px;
-margin-bottom:30px;
-}
-
-.searchBox{
-display:flex;
-justify-content:center;
-gap:10px;
-}
-
-#codeInput{
-padding:14px 25px;
+input{
+padding:12px 20px;
+border-radius:30px;
 border:none;
-border-radius:40px;
-width:260px;
+width:220px;
 font-size:16px;
-outline:none;
 }
 
 button{
-padding:14px 28px;
+padding:12px 25px;
+border-radius:30px;
 border:none;
-border-radius:40px;
 background:white;
-color:#0f4c81;
+color:#0b3d91;
 font-weight:bold;
 cursor:pointer;
-transition:0.2s;
-}
-
-button:hover{
-background:#e7f1ff;
+margin-left:10px;
 }
 
 #result{
 margin-top:30px;
 background:white;
-color:#333;
+color:black;
 display:inline-block;
-padding:20px 30px;
+padding:20px;
 border-radius:12px;
-min-width:260px;
-box-shadow:0 10px 30px rgba(0,0,0,0.2);
+text-align:left;
 }
 
 </style>
+
 </head>
 
 <body>
 
 <h2>Search Screen Code</h2>
 
-<div class="searchBox">
 <input id="codeInput" placeholder="Enter Screen Code">
 <button onclick="searchCode()">Search</button>
-</div>
 
 <div id="result"></div>
 
@@ -88,12 +70,21 @@ mode:"cors"
 .then(res => res.json())
 .then(data => {
 
+let d = data[0];
+
 document.getElementById("result").innerHTML = `
-<b>Code :</b> ${data.CodeDGT}<br>
-<b>Area :</b> ${data.Area}<br>
-<b>Pixel :</b> ${data.Pixel}<br>
-<b>Width :</b> ${data["กว้าง(m)"]}<br>
-<b>Height :</b> ${data["สูง(m)"]}
+<b>Code DGT :</b> ${d.CodeDGT}<br>
+<b>Code Hello :</b> ${d.CodeHello}<br>
+<b>ชื่อจอ :</b> ${d["ชื่อจอในAppendix"]}<br>
+<b>Area :</b> ${d.Area}<br>
+<b>เส้นถนน :</b> ${d["เส้นถนนรับการมอง"]}<br>
+<b>Type :</b> ${d.TypeScreens}<br>
+<b>Format :</b> ${d.Format3}<br>
+<b>Pixel :</b> ${d.Pixel}<br>
+<b>Width :</b> ${d["กว้าง(m)"]} m<br>
+<b>Height :</b> ${d["สูง(m)"]} m<br>
+<b>Area (sqm) :</b> ${d["ตร.ม."]}<br>
+<b>Full :</b> ${d.Full}
 `;
 
 })
