@@ -43,7 +43,7 @@ display:inline-block;
 padding:25px;
 border-radius:12px;
 text-align:left;
-min-width:320px;
+min-width:300px;
 }
 
 </style>
@@ -55,7 +55,7 @@ min-width:320px;
 
 <h2>Search Screen Code</h2>
 
-<input id="codeInput" placeholder="Enter Screen Code">
+<input id="codeInput" placeholder="Enter Code เช่น DGT024">
 <button onclick="searchCode()">Search</button>
 
 <div id="result"></div>
@@ -73,25 +73,36 @@ fetch("https://pb-n8n.planbmedia.co.th/webhook/search-screen?code=" + code)
 
 .then(data => {
 
+if(!data || data.length === 0){
+document.getElementById("result").innerHTML = "Data not found";
+return;
+}
+
 let d = data[0];
 
 document.getElementById("result").innerHTML = `
+
 <b>Code :</b> ${d.CodeDGT}<br><br>
+
 <b>Location :</b> ${d["ชื่อจอในAppendix"]}<br>
-<b>Area :</b> ${d.Area}<br>
+
 <b>Type :</b> ${d.TypeScreens}<br>
+
 <b>Format :</b> ${d.Format3}<br>
+
 <b>Pixel :</b> ${d.Pixel}<br>
+
 <b>Width :</b> ${d["กว้าง(m)"]} m<br>
-<b>Height :</b> ${d["สูง(m)"]} m<br>
-<b>Full :</b> ${d.Full}
+
+<b>Height :</b> ${d["สูง(m)"]} m
+
 `;
 
 })
 
 .catch(error => {
 
-document.getElementById("result").innerHTML = "Data not found";
+document.getElementById("result").innerHTML = "Error connecting API";
 
 });
 
@@ -100,4 +111,5 @@ document.getElementById("result").innerHTML = "Data not found";
 </script>
 
 </body>
+
 </html>
