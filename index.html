@@ -5,14 +5,14 @@
 <title>Screen Search</title>
 </head>
 
-<body style="font-family:sans-serif;text-align:center;margin-top:80px;">
+<body style="font-family:sans-serif;text-align:center;margin-top:80px;background:#234a96;color:white;">
 
 <h2>Search Screen Code</h2>
 
-<input id="codeInput" placeholder="Enter Code">
-<button onclick="searchCode()">Search</button>
+<input id="codeInput" placeholder="Enter Code" style="padding:12px;border-radius:30px;border:none;width:200px;">
+<button onclick="searchCode()" style="padding:12px 20px;border-radius:30px;border:none;">Search</button>
 
-<div id="result" style="margin-top:30px;"></div>
+<div id="result" style="margin-top:30px;background:white;color:black;padding:20px;border-radius:10px;display:inline-block;"></div>
 
 <script>
 
@@ -20,18 +20,13 @@ function searchCode(){
 
 let code = document.getElementById("codeInput").value;
 
-fetch("https://pb-n8n.planbmedia.co.th/webhook/search-screen?code=" + code)
+fetch("https://pb-n8n.planbmedia.co.th/webhook/search-screen?code="+code)
 
 .then(res => res.json())
 
 .then(data => {
 
-if(data.length == 0){
-document.getElementById("result").innerHTML = "Data not found";
-return;
-}
-
-let d = data[0];
+let d = data[0]
 
 document.getElementById("result").innerHTML = `
 Code : ${d.CodeDGT}<br>
@@ -41,13 +36,13 @@ Format : ${d.Format3}<br>
 Pixel : ${d.Pixel}<br>
 Width : ${d["กว้าง(m)"]}<br>
 Height : ${d["สูง(m)"]}
-`;
+`
 
 })
 
 .catch(err=>{
-document.getElementById("result").innerHTML = "Error connecting API";
-});
+document.getElementById("result").innerHTML="API Error"
+})
 
 }
 
