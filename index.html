@@ -1,38 +1,43 @@
 <script>
+
 function searchCode(){
 
 let code = document.getElementById("codeInput").value;
 
-if(!code){
-document.getElementById("result").innerHTML = "Please enter screen code";
-return;
-}
-
-fetch("https://pb-n8n.planbmedia.co.th/webhook/search-screen?code=" + code,{
-method:"GET",
-mode:"cors"
-})
-
+fetch("https://pb-n8n.planbmedia.co.th/webhook/search-screen?code=" + code)
 .then(res => res.json())
 .then(data => {
 
-let d = data[0];
+let html = "";
 
-document.getElementById("result").innerHTML = `
+if(data.length === 0){
+html = "No data found";
+}
+
+data.forEach(d => {
+
+html += `
+<div style="margin-bottom:20px">
 Code : ${d.CodeDGT}<br>
-Name : ${d["ชื่อสินจอในAppendix"]}<br>
+Name : ${d["ชื่อจอในAppendix"]}<br>
 Type : ${d.TypeScreens}<br>
 Format : ${d.Format3}<br>
 Pixel : ${d.Pixel}<br>
 Width : ${d["กว้าง(m)"]}<br>
 Height : ${d["สูง(m)"]}
+</div>
 `;
+
+});
+
+document.getElementById("result").innerHTML = html;
 
 })
 
 .catch(err=>{
-document.getElementById("result").innerHTML = "Data not found";
+document.getElementById("result").innerHTML = "Error loading data";
 });
 
 }
+
 </script>
