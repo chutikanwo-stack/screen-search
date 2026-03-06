@@ -19,13 +19,20 @@ function searchCode(){
 
 let code = document.getElementById("codeInput").value;
 
-fetch("https://pb-n8n.planbmedia.co.th/webhook-test/search-screen" + code,{
+if(!code){
+document.getElementById("result").innerHTML = "Please enter screen code";
+return;
+}
+
+fetch("https://pb-n8n.planbmedia.co.th/webhook/search-screen?code=" + code,{
 method:"GET",
 mode:"cors"
 })
 
 .then(res => res.json())
 .then(data => {
+
+let d = data;
 
 document.getElementById("result").innerHTML = `
 Code : ${d.CodeDGT}<br>
