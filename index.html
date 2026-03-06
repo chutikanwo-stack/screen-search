@@ -1,62 +1,63 @@
 <!DOCTYPE html>
-<html>
+<html lang="th">
 <head>
-<meta charset="UTF-8">
-<title>Screen Search</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Screen Search Tool</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
+<body class="bg-gray-50 min-h-screen p-4 md:p-10">
 
-<body style="font-family:sans-serif;text-align:center;margin-top:80px;">
+    <div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">ค้นหาข้อมูลจอ</h2>
+        
+        <div class="flex gap-2">
+            <input id="codeInput" type="text" placeholder="ใส่รหัสจอ..." 
+                class="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <button onclick="searchCode()" 
+                class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg transition duration-200">
+                ค้นหา
+            </button>
+        </div>
 
-<h2>Search Screen Code</h2>
+        <div id="result" class="mt-6 space-y-4"></div>
+    </div>
 
-<input id="codeInput" placeholder="Enter Screen Code">
-<button onclick="searchCode()">Search</button>
+    <script>
+        function searchCode(){
+            let code = document.getElementById("codeInput").value;
+            let resultDiv = document.getElementById("result");
+            
+            if(!code) return;
 
-<div id="result" style="margin-top:20px;"></div>
+            resultDiv.innerHTML = "<p class='text-center text-gray-500'>กำลังโหลด...</p>";
 
-<script>
-
-function searchCode(){
-
-let code = document.getElementById("codeInput").value;
-
-fetch("https://pb-n8n.planbmedia.co.th/webhook/search-screen?code=" + code)
-.then(res => res.json())
-.then(data => {
-
-let html = "";
-
-if(!data || data.length === 0){
-document.getElementById("result").innerHTML = "No data found";
-return;
-}
-
-data.forEach(d => {
-
-html += `
-<div style="margin-bottom:20px">
-Code : ${d.CodeDGT}<br>
-Name : ${d["ชื่อจอในAppendix"]}<br>
-Type : ${d.TypeScreens}<br>
-Format : ${d.Format3}<br>
-Pixel : ${d.Pixel}<br>
-Width : ${d["กว้าง(m)"]}<br>
-Height : ${d["สูง(m)"]}
-</div>
-`;
-
-});
-
-document.getElementById("result").innerHTML = html;
-
-})
-.catch(err=>{
-document.getElementById("result").innerHTML = "Error loading data";
-});
-
-}
-
-</script>
-
+            fetch("https://pb-n8n.planbmedia.co.th/webhook/search-screen?code=" + code)
+            .then(res => res.json())
+            .then(data => {
+                if(!data || data.length === 0){
+                    resultDiv.innerHTML = "<p class='text-center text-red-500'>ไม่พบข้อมูล</p>";
+                    return;
+                }
+                
+                let html = "";
+                data.forEach(d => {
+                    html += `
+                    <div class="border-l-4 border-blue-500 bg-gray-50 p-4 rounded-r-lg shadow-sm text-sm">
+                        <p><strong>Code:</strong> ${d.CodeDGT}</p>
+                        <p><strong>ชื่อจอ:</strong> ${d["ชื่อจอในAppendix"]}</p>
+                        <p><strong>ประเภท:</strong> ${d.TypeScreens}</p>
+                        <p><strong>รูปแบบ:</strong> ${d.Format3}</p>
+                        <p><strong>ความละเอียด:</strong> ${d.Pixel}</p>
+                        <p><strong>ขนาด:</strong> ${d["กว้าง(m)"]} x ${d["สูง(m)"]} เมตร</p>
+                    </div>`;
+                });
+                resultDiv.innerHTML = html;
+            })
+            .catch(err => {
+                resultDiv.innerHTML = "<p class='text-center text-red-600'>เกิดข้อผิดพลาดในการโหลดข้อมูล</p>";
+            });
+        }
+    </script>
 </body>
 </html>
