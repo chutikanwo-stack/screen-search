@@ -1,3 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Screen Search</title>
+</head>
+
+<body style="font-family:sans-serif;text-align:center;margin-top:80px;">
+
+<h2>Search Screen Code</h2>
+
+<input id="codeInput" placeholder="Enter Screen Code">
+<button onclick="searchCode()">Search</button>
+
+<div id="result" style="margin-top:20px;"></div>
+
 <script>
 
 function searchCode(){
@@ -10,8 +26,9 @@ fetch("https://pb-n8n.planbmedia.co.th/webhook/search-screen?code=" + code)
 
 let html = "";
 
-if(data.length === 0){
-html = "No data found";
+if(!data || data.length === 0){
+document.getElementById("result").innerHTML = "No data found";
+return;
 }
 
 data.forEach(d => {
@@ -33,7 +50,6 @@ Height : ${d["สูง(m)"]}
 document.getElementById("result").innerHTML = html;
 
 })
-
 .catch(err=>{
 document.getElementById("result").innerHTML = "Error loading data";
 });
@@ -41,3 +57,6 @@ document.getElementById("result").innerHTML = "Error loading data";
 }
 
 </script>
+
+</body>
+</html>
